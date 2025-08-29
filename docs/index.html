@@ -1,77 +1,61 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art Store — Главная</title>
-<link rel="stylesheet" href="static/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art Store — Главная</title>
+  <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
 
 <header class="site-header">
-    <a class="brand" href="index.html">Art Store</a>
-    <nav class="main-nav">
-        <a href="index.html">Главная</a>
-        <div class="dropdown">
-            <a href="#">Магазин</a>
-            <div class="dropdown-content">
-                <a href="paintings.html">Картины</a>
-                <a href="sculptures.html">Скульптуры</a>
-                <a href="rarities.html">Раритет</a>
-                <a href="coins.html">Монеты</a>
-            </div>
-        </div>
-        <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
-        <a href="contact.html">Контакты</a>
-    </nav>
+  <a class="brand" href="index.html">Art Store</a>
+  <nav class="main-nav">
+    <a href="index.html">Главная</a>
+    <div class="dropdown">
+      <a href="#">Магазин</a>
+      <div class="dropdown-content">
+        <a href="paintings.html">Картины</a>
+        <a href="sculptures.html">Скульптуры</a>
+        <a href="rarities.html">Раритет</a>
+        <a href="coins.html">Монеты</a>
+      </div>
+    </div>
+    <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
+    <a href="contact.html">Контакты</a>
+  </nav>
 </header>
 
+<!-- Hero блок -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Добро пожаловать в Art Store</h1>
+    <p>Эксклюзивные картины, скульптуры и редкие коллекции</p>
+    <a href="paintings.html" class="btn">Смотреть коллекцию</a>
+  </div>
+</section>
+
 <main class="container">
+  <div class="special-offer">🔥 Специальное предложение: скидка 20% на все картины! 🔥</div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Добро пожаловать в Art Store</h1>
-        <p>Уникальные картины, скульптуры, редкости и монеты со всего мира.</p>
-        <a href="#offer" class="btn">🔥 Специальное предложение</a>
-    </section>
-
-    <!-- Special Offer -->
-    <section id="offer" class="special-offer">
-        <h2>🔥 Специальное предложение</h2>
-        <p>Скидка 20% на все картины только сегодня!</p>
-        <a href="paintings.html" class="btn">Выбрать картины</a>
-    </section>
-
-    <!-- Shop Sections -->
-    <h2 class="page-title">Наши коллекции</h2>
-    <div class="sections">
-        <a class="section-card" href="paintings.html">🖼 Картины</a>
-        <a class="section-card" href="sculptures.html">🗿 Скульптуры</a>
-        <a class="section-card" href="rarities.html">📜 Раритет</a>
-        <a class="section-card" href="coins.html">🪙 Монеты</a>
-    </div>
-
-    <!-- Why Us -->
-    <section class="why-us">
-        <h2>Почему выбирают нас?</h2>
-        <ul>
-            <li>✔ Подлинные произведения искусства</li>
-            <li>✔ Доставка по всему миру</li>
-            <li>✔ Удобная онлайн-оплата</li>
-        </ul>
-    </section>
-
+  <h2 class="page-title">Разделы магазина</h2>
+  <div class="sections">
+    <a class="section-card" href="paintings.html">Картины</a>
+    <a class="section-card" href="sculptures.html">Скульптуры</a>
+    <a class="section-card" href="rarities.html">Раритет</a>
+    <a class="section-card" href="coins.html">Монеты</a>
+  </div>
 </main>
 
 <div class="site-footer-wrapper">
-    <footer class="site-footer">Corporation VA © 2025</footer>
+  <footer class="site-footer">© 2025 Art Store — Corporation VA</footer>
 </div>
 
 <script>
 function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-    const total = Object.values(cart).reduce((a,b)=>a+b,0);
-    document.getElementById('cart-count').textContent = total;
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  const total = Object.values(cart).reduce((a,b)=>a+b,0);
+  document.getElementById('cart-count').textContent = total;
 }
 updateCartCount();
 </script>
