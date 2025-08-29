@@ -1,39 +1,111 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art Store — Контакты</title>
-<link rel="stylesheet" href="static/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Контакты — Art Store</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    .contact-info {
+      text-align: center;
+      font-size: 1.2em;
+      margin-bottom: 40px;
+    }
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto 50px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .contact-form h3 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .contact-form input, .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+    .contact-form button {
+      width: 100%;
+      padding: 14px;
+      background: #111;
+      color: #fff;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .contact-form button:hover {
+      background: #333;
+    }
+    .map {
+      margin: 40px auto;
+      max-width: 900px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .map iframe {
+      width: 100%;
+      height: 400px;
+      border: 0;
+    }
+  </style>
 </head>
 <body>
 
 <header class="site-header">
-    <a class="brand" href="index.html">Art Store</a>
-    <nav class="main-nav">
-        <a href="index.html">Главная</a>
-        <div class="dropdown">
-            <a href="#">Магазин</a>
-            <div class="dropdown-content">
-                <a href="paintings.html">Картины</a>
-                <a href="sculptures.html">Скульптуры</a>
-                <a href="rarities.html">Раритет</a>
-                <a href="coins.html">Монеты</a>
-            </div>
-        </div>
-        <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
-        <a href="contact.html">Контакты</a>
-    </nav>
+  <a class="brand" href="index.html">Art Store</a>
+  <nav class="main-nav">
+    <a href="index.html">Главная</a>
+    <div class="dropdown">
+      <a href="#">Магазин</a>
+      <div class="dropdown-content">
+        <a href="paintings.html">Картины</a>
+        <a href="sculptures.html">Скульптуры</a>
+        <a href="rarities.html">Раритет</a>
+        <a href="coins.html">Монеты</a>
+      </div>
+    </div>
+    <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
+    <a href="contact.html">Контакты</a>
+  </nav>
 </header>
 
 <main class="container">
-    <h2 class="page-title">Контакты</h2>
-    <p>Email: info@artstore.com</p>
-    <p>Телефон: +7 123 456-78-90</p>
+  <h2 class="page-title">Свяжитесь с нами</h2>
+
+  <div class="contact-info">
+    <p><strong>Телефон:</strong> <a href="tel:+431111111111">+43 1 111 111 111</a></p>
+    <p><strong>Email:</strong> <a href="mailto:info@artstore.com">info@artstore.com</a></p>
+    <p><strong>Адрес:</strong> Wien, Austria</p>
+  </div>
+
+  <div class="contact-form">
+    <h3>Форма обратной связи</h3>
+    <form onsubmit="sendMessage(event)">
+      <input type="text" name="name" placeholder="Ваше имя" required>
+      <input type="email" name="email" placeholder="Ваш Email" required>
+      <textarea name="message" rows="5" placeholder="Ваше сообщение" required></textarea>
+      <button type="submit">Отправить</button>
+    </form>
+  </div>
+
+  <div class="map">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2650583.322865486!2d14.123222!3d48.208174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d07e4c0d5b7d1%3A0x400f81c823f9150!2sWien%2C%20Austria!5e0!3m2!1sru!2sat!4v1700000000000!5m2!1sru!2sat" allowfullscreen="" loading="lazy"></iframe>
+  </div>
+
 </main>
 
 <div class="site-footer-wrapper">
-    <footer class="site-footer">Corporation VA</footer>
+  <footer class="site-footer">Corporation VA</footer>
 </div>
 
 <script>
@@ -43,6 +115,12 @@ function updateCartCount() {
     document.getElementById('cart-count').textContent = total;
 }
 updateCartCount();
+
+function sendMessage(e) {
+    e.preventDefault();
+    alert("Спасибо! Ваше сообщение отправлено ✅");
+    e.target.reset();
+}
 </script>
 
 </body>
