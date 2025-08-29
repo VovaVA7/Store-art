@@ -1,63 +1,104 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art Store — Корзина</title>
-<link rel="stylesheet" href="static/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Корзина | Art Store</title>
+  <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
-
-<header class="site-header">
-    <a class="brand" href="index.html">Art Store</a>
+  <!-- Шапка -->
+  <header class="site-header">
+    <a href="index.html" class="brand">🎨 Art Store</a>
     <nav class="main-nav">
-        <a href="index.html">Главная</a>
-        <div class="dropdown">
-            <a href="#">Магазин</a>
-            <div class="dropdown-content">
-                <a href="paintings.html">Картины</a>
-                <a href="sculptures.html">Скульптуры</a>
-                <a href="rarities.html">Раритет</a>
-                <a href="coins.html">Монеты</a>
-            </div>
-        </div>
-        <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
-        <a href="contact.html">Контакты</a>
+      <a href="index.html">Главная</a>
+      <a href="index.html#sections">Категории</a>
+      <a href="cart.html">Корзина <span class="badge" id="cart-count">2</span></a>
+      <a href="contacts.html">Контакты</a>
     </nav>
-</header>
+  </header>
 
-<main class="container">
-    <h2 class="page-title">Корзина</h2>
-    <div id="cart-items"></div>
-    <p id="total-price"></p>
-</main>
+  <!-- Контент -->
+  <div class="container">
+    <h1 class="page-title">🛒 Ваша корзина</h1>
 
-<div class="site-footer-wrapper">
-    <footer class="site-footer">Corporation VA</footer>
-</div>
+    <div class="cart">
+      <div class="cart-item" data-price="500">
+        <img src="static/img/monalisa.jpg" alt="Мона Лиза" class="cart-img">
+        <div class="cart-info">
+          <h3>Мона Лиза</h3>
+          <p>Цена: €500</p>
+          <label>
+            Кол-во:
+            <input type="number" class="qty" value="1" min="1">
+          </label>
+        </div>
+        <button class="remove-btn">✖</button>
+      </div>
 
-<script>
-function getCart() { return JSON.parse(localStorage.getItem('cart') || '{}'); }
-function setCart(cart) { localStorage.setItem('cart', JSON.stringify(cart)); updateCart(); }
+      <div class="cart-item" data-price="300">
+        <img src="static/img/art2.jpg" alt="Абстракция" class="cart-img">
+        <div class="cart-info">
+          <h3>Абстракция</h3>
+          <p>Цена: €300</p>
+          <label>
+            Кол-во:
+            <input type="number" class="qty" value="2" min="1">
+          </label>
+        </div>
+        <button class="remove-btn">✖</button>
+      </div>
+    </div>
 
-function updateCart() {
-    const cart = getCart();
-    const cartItemsDiv = document.getElementById('cart-items');
-    cartItemsDiv.innerHTML = '';
-    let total = 0;
-    for (let id in cart) {
-        let count = cart[id];
-        total += count; // для примера считаем единиц
-        let div = document.createElement('div');
-        div.textContent = `Товар ${id} — Количество: ${count}`;
-        cartItemsDiv.appendChild(div);
+    <div class="cart-summary">
+      <p>Итого: <strong id="cart-total">€1100</strong></p>
+      <div class="cart-actions">
+        <a href="index.html" class="btn">Продолжить покупки</a>
+        <a href="checkout.html" class="btn btn-accent">Оформить заказ</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Футер -->
+  <div class="site-footer-wrapper">
+    <footer class="site-footer">
+      <p>© 2025 Art Store. Все права защищены.</p>
+    </footer>
+  </div>
+
+  <!-- Скрипт -->
+  <script>
+    function updateCart() {
+      let items = document.querySelectorAll(".cart-item");
+      let total = 0;
+      let count = 0;
+
+      items.forEach(item => {
+        let price = parseFloat(item.dataset.price);
+        let qty = parseInt(item.querySelector(".qty").value);
+        total += price * qty;
+        count += qty;
+      });
+
+      document.getElementById("cart-total").textContent = `€${total}`;
+      document.getElementById("cart-count").textContent = count;
     }
-    document.getElementById('total-price').textContent = `Всего товаров: ${total}`;
-    document.getElementById('cart-count').textContent = total;
-}
 
-updateCart();
-</script>
+    // Обновление при изменении количества
+    document.querySelectorAll(".qty").forEach(input => {
+      input.addEventListener("input", updateCart);
+    });
 
+    // Удаление товара
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.closest(".cart-item").remove();
+        updateCart();
+      });
+    });
+
+    // Первичный расчёт
+    updateCart();
+  </script>
 </body>
 </html>

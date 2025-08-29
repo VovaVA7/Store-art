@@ -1,4 +1,8 @@
 /* Общие стили */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Roboto, sans-serif;
@@ -159,4 +163,140 @@ body {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  color:
+  color: #111;
+  font-size: 1.2em;
+  font-weight: bold;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.section-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+/* Корзина */
+.cart {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cart-item {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cart-img {
+  width: 100px;
+  border-radius: 8px;
+}
+
+.cart-info {
+  flex: 1;
+  margin: 0 20px;
+}
+
+.cart-info h3 {
+  margin: 0 0 8px;
+}
+
+.qty {
+  width: 60px;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.remove-btn {
+  background: red;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.remove-btn:hover {
+  background: #b91c1c;
+}
+
+.cart-summary {
+  margin-top: 30px;
+  padding: 20px;
+  background: #facc15;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.cart-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 24px;
+  background: #111;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.btn:hover {
+  background: #333;
+}
+
+.btn-accent {
+  background: #facc15;
+  color: #111;
+  font-weight: bold;
+}
+.btn-accent:hover {
+  background: #eab308;
+}
+
+/* Футер */
+.site-footer-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+.site-footer {
+  background-color: #111;
+  color: #fff;
+  font-weight: 500;
+  padding: 20px 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cart-img {
+    width: 80px;
+  }
+  .cart-info {
+    margin: 0;
+  }
+  .cart-actions {
+    flex-direction: column;
+  }
+  .sections {
+    flex-direction: column;
+    align-items: center;
+  }
+}
