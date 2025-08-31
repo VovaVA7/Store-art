@@ -1,87 +1,63 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Картины — Art Store</title>
-  <link rel="stylesheet" href="static/css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art Store — Картины</title>
+<link rel="stylesheet" href="/Store-art/static/css/style.css">
 </head>
 <body>
-<header>
-  <h1>Art Store</h1>
-  <nav>
+
+<header class="site-header">
+  <a class="brand" href="index.html">Art Store</a>
+  <nav class="main-nav">
     <a href="index.html">Главная</a>
-    <a href="paintings.html">Картины</a>
-    <a href="cart.html">Корзина (<span id="cart-count">0</span>)</a>
-    <a href="contacts.html">Контакты</a>
+    <div class="dropdown">
+      <a href="#">Магазин</a>
+      <div class="dropdown-content">
+        <a href="paintings.html">Картины</a>
+        <a href="sculptures.html">Скульптуры</a>
+        <a href="rarities.html">Раритет</a>
+        <a href="coins.html">Монеты</a>
+      </div>
+    </div>
+    <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
+    <a href="contact.html">Контакты</a>
   </nav>
 </header>
 
-<main>
-  <h1 class="page-title">Картины</h1>
-  <p>Здесь представлены картины для покупки:</p>
+<main class="container">
+  <h1>Картины</h1>
+  <p>Эксклюзивные картины для вашего интерьера и коллекции.</p>
 
-  <div class="gallery">
-    <div class="card">
-      <img src="static/img/painting1.jpg" alt="Картина 1">
-      <h3>Закат над Веной</h3>
-      <p>Автор: Иван Иванов</p>
-      <p class="price">1200 ₽</p>
-      <button class="btn add-to-cart" data-id="1" data-name="Закат над Веной" data-price="1200" data-img="static/img/painting1.jpg">В корзину</button>
+  <div class="sections">
+    <div class="section-card">
+      <img src="/Store-art/img/painting1.jpg" alt="Картина 1" style="width:100%; border-radius:10px;">
+      <h2>Картина 1</h2>
+      <p>Описание картины 1.</p>
     </div>
 
-    <div class="card">
-      <img src="static/img/painting2.jpg" alt="Картина 2">
-      <h3>Австрийские Альпы</h3>
-      <p>Автор: Анна Петрова</p>
-      <p class="price">1500 ₽</p>
-      <button class="btn add-to-cart" data-id="2" data-name="Австрийские Альпы" data-price="1500" data-img="static/img/painting2.jpg">В корзину</button>
-    </div>
-
-    <div class="card">
-      <img src="static/img/painting3.jpg" alt="Картина 3">
-      <h3>Река Дунай</h3>
-      <p>Автор: Карл Шмидт</p>
-      <p class="price">1800 ₽</p>
-      <button class="btn add-to-cart" data-id="3" data-name="Река Дунай" data-price="1800" data-img="static/img/painting3.jpg">В корзину</button>
+    <div class="section-card">
+      <img src="/Store-art/img/painting2.jpg" alt="Картина 2" style="width:100%; border-radius:10px;">
+      <h2>Картина 2</h2>
+      <p>Описание картины 2.</p>
     </div>
   </div>
 </main>
 
-<footer>
-  <p>© 2025 My Art Store</p>
-</footer>
+<div class="site-footer-wrapper">
+  <footer class="site-footer">© 2025 Art Store — Corporation VA</footer>
+</div>
 
 <script>
-  // обновляем счётчик корзины
-  function updateCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || {};
-    const count = Object.values(cart).reduce((a, b) => a + b, 0);
-    document.getElementById("cart-count").textContent = count;
-  }
-
-  // добавляем в корзину
-  document.querySelectorAll(".add-to-cart").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.id;
-      const name = btn.dataset.name;
-      const price = parseInt(btn.dataset.price);
-      const img = btn.dataset.img;
-
-      let cart = JSON.parse(localStorage.getItem("cart")) || {};
-
-      if (!cart[id]) {
-        cart[id] = { name, price, img, qty: 1 };
-      } else {
-        cart[id].qty++;
-      }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      alert(`${name} добавлена в корзину`);
-    });
-  });
-
-  updateCartCount();
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  let total = 0;
+  for (const key in cart) if (cart.hasOwnProperty(key)) total += parseInt(cart[key],10);
+  document.getElementById('cart-count').textContent = total;
+}
+document.addEventListener('DOMContentLoaded', updateCartCount);
 </script>
+
 </body>
 </html>

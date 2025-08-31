@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art Store — Раритет</title>
+<title>Art Store — Главная</title>
 <link rel="stylesheet" href="/Store-art/static/css/style.css">
 </head>
 <body>
@@ -27,10 +27,22 @@
 </header>
 
 <main class="container">
-  <h1>Раритет</h1>
-  <p>Редкие коллекционные предметы для настоящих ценителей.</p>
+  <h1>Добро пожаловать в Art Store</h1>
+  <p>Коллекционные предметы искусства для настоящих ценителей.</p>
 
   <div class="sections">
+    <div class="section-card">
+      <img src="/Store-art/img/painting1.jpg" alt="Картина 1" style="width:100%; border-radius:10px;">
+      <h2>Картина 1</h2>
+      <p>Описание картины 1.</p>
+    </div>
+
+    <div class="section-card">
+      <img src="/Store-art/img/sculpture1.jpg" alt="Скульптура 1" style="width:100%; border-radius:10px;">
+      <h2>Скульптура 1</h2>
+      <p>Описание скульптуры 1.</p>
+    </div>
+
     <div class="section-card">
       <img src="/Store-art/img/rarity1.jpg" alt="Раритет 1" style="width:100%; border-radius:10px;">
       <h2>Раритет 1</h2>
@@ -38,21 +50,9 @@
     </div>
 
     <div class="section-card">
-      <img src="/Store-art/img/rarity2.jpg" alt="Раритет 2" style="width:100%; border-radius:10px;">
-      <h2>Раритет 2</h2>
-      <p>Описание раритета 2.</p>
-    </div>
-
-    <div class="section-card">
-      <img src="/Store-art/img/rarity3.jpg" alt="Раритет 3" style="width:100%; border-radius:10px;">
-      <h2>Раритет 3</h2>
-      <p>Описание раритета 3.</p>
-    </div>
-
-    <div class="section-card">
-      <img src="/Store-art/img/rarity4.jpg" alt="Раритет 4" style="width:100%; border-radius:10px;">
-      <h2>Раритет 4</h2>
-      <p>Описание раритета 4.</p>
+      <img src="/Store-art/img/coin1.jpg" alt="Монета 1" style="width:100%; border-radius:10px;">
+      <h2>Монета 1</h2>
+      <p>Описание монеты 1.</p>
     </div>
   </div>
 </main>
@@ -64,10 +64,13 @@
 <script>
 function updateCartCount() {
   const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  const total = Object.values(cart).reduce((a,b)=>a+b,0);
+  let total = 0;
+  for (const key in cart) {
+    if (cart.hasOwnProperty(key)) total += parseInt(cart[key], 10);
+  }
   document.getElementById('cart-count').textContent = total;
 }
-updateCartCount();
+document.addEventListener('DOMContentLoaded', updateCartCount);
 </script>
 
 </body>
