@@ -96,6 +96,17 @@ body {
   box-shadow: 0 6px 16px rgba(0,0,0,0.35);
 }
 
+/* ================= Блок приветствия ================= */
+.welcome-text {
+  text-align: center;
+  background: #facc15;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px auto;
+  max-width: 800px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
 /* ================= Секции карточек ================= */
 .sections {
   display: grid;
