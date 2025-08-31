@@ -77,9 +77,10 @@ body {
 
 /* ================= Спецпредложение ================= */
 .special-offer {
-  position: fixed;
-  top: 14px;
-  right: 28px;
+  position: relative;      /* вместо fixed */
+  display: block;
+  margin: 20px auto;       /* центр по горизонтали */
+  text-align: center;
   background: #facc15;
   color: #111;
   padding: 10px 16px;
