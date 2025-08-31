@@ -15,25 +15,28 @@
     </nav>
   </header>
 
-  <section class="form-section">
+  <section class="dashboard">
     <div class="container">
       <h1>Вход продавца</h1>
       <form id="login-form">
         <label>Имя пользователя</label>
-        <input type="text" id="username" required>
+        <input type="text" id="username" placeholder="Введите имя" required>
 
         <label>Пароль</label>
-        <input type="password" id="password" required>
+        <input type="password" id="password" placeholder="Введите пароль" required>
 
-        <button type="submit" class="btn">Войти</button>
+        <button type="submit" class="upload-btn">Войти</button>
       </form>
+      <p style="text-align:center; margin-top:15px;">
+        Нет аккаунта? <a href="register.html" style="color:#facc15; text-decoration:none;">Зарегистрироваться</a>
+      </p>
     </div>
   </section>
 
   <script>
     document.getElementById("login-form").addEventListener("submit", function(e) {
       e.preventDefault();
-      const username = document.getElementById("username").value;
+      const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
 
       let users = JSON.parse(localStorage.getItem("users") || "[]");
