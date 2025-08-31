@@ -3,102 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Корзина | Art Store</title>
+  <title>Ваша корзина</title>
   <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    .cart { padding: 40px 20px; }
+    .cart-items { display: flex; flex-direction: column; gap: 20px; }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .cart-img {
+      width: 100px; height: 100px; object-fit: cover;
+      border-radius: 8px; margin-right: 20px;
+    }
+    .cart-info { flex: 1; }
+    .qty-controls { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+    .qty-btn {
+      background: #eee; border: none; padding: 6px 12px;
+      border-radius: 6px; cursor: pointer; font-size: 18px;
+    }
+    .qty-btn:hover { background: #ddd; }
+    .qty-input {
+      width: 50px; text-align: center;
+      border: 1px solid #ccc; border-radius: 6px; padding: 4px;
+    }
+    .remove-btn {
+      background: #ff4444; border: none; color: #fff;
+      padding: 8px 14px; border-radius: 8px; cursor: pointer;
+    }
+    .remove-btn:hover { background: #cc0000; }
+    .cart-summary {
+      margin-top: 30px; font-size: 1.2em;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px; background: #fafafa; border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .cart-actions { display: flex; gap: 15px; }
+    .btn {
+      display: inline-block; padding: 12px 24px;
+      background: #ff6600; color: #fff;
+      border-radius: 8px; text-decoration: none;
+      transition: 0.3s;
+    }
+    .btn:hover { background: #e65c00; }
+    .btn-accent { background: #28a745; }
+    .btn-accent:hover { background: #218838; }
+    .empty-cart { text-align: center; font-size: 1.3em; padding: 40px; }
+  </style>
 </head>
 <body>
-  <!-- Шапка -->
   <header class="site-header">
-    <a href="index.html" class="brand">🎨 Art Store</a>
+    <a href="index.html" class="brand">Art Store</a>
     <nav class="main-nav">
       <a href="index.html">Главная</a>
-      <a href="index.html#sections">Категории</a>
-      <a href="cart.html">Корзина <span class="badge" id="cart-count">2</span></a>
-      <a href="contacts.html">Контакты</a>
+      <a href="paintings.html">Картины</a>
+      <a href="sculptures.html">Скульптуры</a>
+      <a href="rarities.html">Раритет</a>
+      <a href="coins.html">Монеты</a>
+      <a href="contact.html">Контакты</a>
     </nav>
   </header>
 
-  <!-- Контент -->
-  <div class="container">
-    <h1 class="page-title">🛒 Ваша корзина</h1>
-
-    <div class="cart">
-      <div class="cart-item" data-price="500">
-        <img src="static/img/monalisa.jpg" alt="Мона Лиза" class="cart-img">
-        <div class="cart-info">
-          <h3>Мона Лиза</h3>
-          <p>Цена: €500</p>
-          <label>
-            Кол-во:
-            <input type="number" class="qty" value="1" min="1">
-          </label>
+  <section class="cart">
+    <div class="container">
+      <h1 class="page-title">Ваша корзина</h1>
+      <div class="cart-items" id="cart-items"></div>
+      <div class="cart-summary" id="cart-summary" style="display:none;">
+        <p><strong>Итого:</strong> <span id="cart-total">€0</span></p>
+        <div class="cart-actions">
+          <a href="index.html" class="btn">Продолжить покупки</a>
+          <a href="checkout.html" class="btn btn-accent">Оформить заказ</a>
         </div>
-        <button class="remove-btn">✖</button>
       </div>
-
-      <div class="cart-item" data-price="300">
-        <img src="static/img/art2.jpg" alt="Абстракция" class="cart-img">
-        <div class="cart-info">
-          <h3>Абстракция</h3>
-          <p>Цена: €300</p>
-          <label>
-            Кол-во:
-            <input type="number" class="qty" value="2" min="1">
-          </label>
-        </div>
-        <button class="remove-btn">✖</button>
+      <div class="empty-cart" id="empty-cart" style="display:none;">
+        Ваша корзина пуста 🛒
       </div>
     </div>
+  </section>
 
-    <div class="cart-summary">
-      <p>Итого: <strong id="cart-total">€1100</strong></p>
-      <div class="cart-actions">
-        <a href="index.html" class="btn">Продолжить покупки</a>
-        <a href="checkout.html" class="btn btn-accent">Оформить заказ</a>
-      </div>
-    </div>
-  </div>
+  <footer>
+    <p>© 2025 Art Store. Все права защищены.</p>
+  </footer>
 
-  <!-- Футер -->
-  <div class="site-footer-wrapper">
-    <footer class="site-footer">
-      <p>© 2025 Art Store. Все права защищены.</p>
-    </footer>
-  </div>
-
-  <!-- Скрипт -->
   <script>
-    function updateCart() {
-      let items = document.querySelectorAll(".cart-item");
-      let total = 0;
-      let count = 0;
+    function renderCart() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+      const itemsContainer = document.getElementById('cart-items');
+      const summary = document.getElementById('cart-summary');
+      const empty = document.getElementById('empty-cart');
+      const totalEl = document.getElementById('cart-total');
+      itemsContainer.innerHTML = "";
 
-      items.forEach(item => {
-        let price = parseFloat(item.dataset.price);
-        let qty = parseInt(item.querySelector(".qty").value);
-        total += price * qty;
-        count += qty;
+      let total = 0;
+      const entries = Object.entries(cart);
+
+      if (entries.length === 0) {
+        summary.style.display = "none";
+        empty.style.display = "block";
+        return;
+      }
+
+      empty.style.display = "none";
+      summary.style.display = "flex";
+
+      entries.forEach(([name, data]) => {
+        const itemTotal = data.price * data.qty;
+        total += itemTotal;
+
+        const item = document.createElement('div');
+        item.className = 'cart-item';
+        item.innerHTML = `
+          <img src="${data.img}" alt="${name}" class="cart-img">
+          <div class="cart-info">
+            <h3>${name}</h3>
+            <p>Цена: €${data.price}</p>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="changeQty('${name}', -1)">-</button>
+              <input type="number" value="${data.qty}" class="qty-input" readonly>
+              <button class="qty-btn" onclick="changeQty('${name}', 1)">+</button>
+            </div>
+          </div>
+          <button class="remove-btn" onclick="removeItem('${name}')">Удалить</button>
+        `;
+        itemsContainer.appendChild(item);
       });
 
-      document.getElementById("cart-total").textContent = `€${total}`;
-      document.getElementById("cart-count").textContent = count;
+      totalEl.textContent = "€" + total;
     }
 
-    // Обновление при изменении количества
-    document.querySelectorAll(".qty").forEach(input => {
-      input.addEventListener("input", updateCart);
-    });
+    function changeQty(name, delta) {
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+      if (!cart[name]) return;
+      cart[name].qty += delta;
+      if (cart[name].qty <= 0) delete cart[name];
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
 
-    // Удаление товара
-    document.querySelectorAll(".remove-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        btn.closest(".cart-item").remove();
-        updateCart();
-      });
-    });
+    function removeItem(name) {
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+      delete cart[name];
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
 
-    // Первичный расчёт
-    updateCart();
+    renderCart();
   </script>
 </body>
 </html>
