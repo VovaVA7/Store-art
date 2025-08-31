@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art Store — Оформление заказа</title>
+<link rel="stylesheet" href="/Store-art/static/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">Art Store</a>
+  <nav class="main-nav">
+    <a href="index.html">Главная</a>
+    <div class="dropdown">
+      <a href="#">Магазин</a>
+      <div class="dropdown-content">
+        <a href="paintings.html">Картины</a>
+        <a href="sculptures.html">Скульптуры</a>
+        <a href="rarities.html">Раритет</a>
+        <a href="coins.html">Монеты</a>
+      </div>
+    </div>
+    <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
+    <a href="contact.html">Контакты</a>
+  </nav>
+</header>
+
+<main class="container">
+  <h1>Оформление заказа</h1>
+  <p>Заполните форму для завершения покупки.</p>
+
+  <form id="checkout-form">
+    <label for="name">Имя:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="address">Адрес доставки:</label>
+    <textarea id="address" name="address" rows="3" required></textarea>
+
+    <label for="payment">Способ оплаты:</label>
+    <select id="payment" name="payment" required>
+      <option value="">Выберите способ</option>
+      <option value="card">Банковская карта</option>
+      <option value="paypal">PayPal</option>
+      <option value="cash">Наличные при получении</option>
+    </select>
+
+    <button type="submit" class="btn btn-accent">Подтвердить заказ</button>
+  </form>
+
+  <div id="confirmation" style="display:none; margin-top:20px; font-weight:bold;">
+    Спасибо за ваш заказ! Мы свяжемся с вами для подтверждения.
+  </div>
+</main>
+
+<div class="site-footer-wrapper">
+  <footer class="site-footer">© 2025 Art Store — Corporation VA</footer>
+</div>
+
+<script>
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  const total = Object.values(cart).reduce((a,b)=>a+b,0);
+  document.getElementById('cart-count').textContent = total;
+}
+updateCartCount();
+
+document.getElementById('checkout-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  localStorage.removeItem('cart'); // очищаем корзину после заказа
+  updateCartCount();
+  document.getElementById('checkout-form').style.display = 'none';
+  document.getElementById('confirmation').style.display = 'block';
+});
+</script>
+
+</body>
+</html>
