@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кабинет продавца</title>
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="brand">Art Store</a>
+    <nav class="main-nav">
+      <a href="index.html">Главная</a>
+      <a href="#" onclick="logout()">Выйти</a>
+    </nav>
+  </header>
+
+  <section class="dashboard">
+    <div class="container">
+      <h1>Кабинет продавца</h1>
+      <form id="add-product-form">
+        <label>Название товара</label>
+        <input type="text" id="product-name" required>
+
+        <label>Цена (€)</label>
+        <input type="number" id="product-price" required>
+
+        <label>Описание</label>
+        <textarea id="product-desc"></textarea>
+
+        <label>Картинка (URL)</label>
+        <input type="text" id="product-img" placeholder="https://...jpg" required>
+
+        <button type="submit" class="btn">Добавить товар</button>
+      </form>
+
+      <h2>Ваши товары</h2>
+      <div id="my-products"></div>
+    </div>
+  </section>
+
+  <script>
+    const currentUser = localStorage.getItem("currentUser");
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    }
+
+    function renderProducts() {
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      const myProducts = products.filter(p => p.seller === currentUser);
+      const container = document.getElementById("my-products");
+      container.innerHTML = "";
+
+      myProducts.forEach(p => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <h3>${p.name}</h3>
+          <p>Цена: €${p.price}</p>
+          <img src="${p.img}" width="120">
+          <p>${p.desc}</p>
+          <hr>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    document.getElementById("add-product-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = document.getElementById("product-name").value;
+      const price = document.getElementById("product-price").value;
+      const desc = document.getElementById("product-desc").value;
+      const img = document.getElementById("product-img").value;
+
+      let products = JSON.parse(localStorage.getItem("products") || "[]");
+      products.push({ name, price, desc, img, seller: currentUser });
+      localStorage.setItem("products", JSON.stringify(products));
+
+      renderProducts();
+      e.target.reset();
+    });
+
+    renderProducts();
+  </script>
+</body>
+</html>

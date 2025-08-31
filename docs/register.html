@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация продавца</title>
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="brand">Art Store</a>
+    <nav class="main-nav">
+      <a href="index.html">Главная</a>
+      <a href="login.html">Войти</a>
+    </nav>
+  </header>
+
+  <section class="form-section">
+    <div class="container">
+      <h1>Регистрация продавца</h1>
+      <form id="register-form">
+        <label>Имя пользователя</label>
+        <input type="text" id="username" required>
+
+        <label>Пароль</label>
+        <input type="password" id="password" required>
+
+        <button type="submit" class="btn">Зарегистрироваться</button>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById("register-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      let users = JSON.parse(localStorage.getItem("users") || "[]");
+
+      if (users.find(u => u.username === username)) {
+        alert("Пользователь с таким именем уже существует");
+        return;
+      }
+
+      users.push({ username, password });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Регистрация успешна!");
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

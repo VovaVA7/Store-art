@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход продавца</title>
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="brand">Art Store</a>
+    <nav class="main-nav">
+      <a href="index.html">Главная</a>
+      <a href="register.html">Регистрация</a>
+    </nav>
+  </header>
+
+  <section class="form-section">
+    <div class="container">
+      <h1>Вход продавца</h1>
+      <form id="login-form">
+        <label>Имя пользователя</label>
+        <input type="text" id="username" required>
+
+        <label>Пароль</label>
+        <input type="password" id="password" required>
+
+        <button type="submit" class="btn">Войти</button>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById("login-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      let users = JSON.parse(localStorage.getItem("users") || "[]");
+      let user = users.find(u => u.username === username && u.password === password);
+
+      if (!user) {
+        alert("Неверное имя пользователя или пароль");
+        return;
+      }
+
+      localStorage.setItem("currentUser", username);
+      window.location.href = "seller-dashboard.html";
+    });
+  </script>
+</body>
+</html>
