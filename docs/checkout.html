@@ -1,81 +1,143 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art Store — Оформление заказа</title>
-<link rel="stylesheet" href="/Store-art/static/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оформление заказа — Art Store</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    /* ================= Checkout ================= */
+    .checkout-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .checkout-container h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 2em;
+      color: #111;
+    }
+
+    .checkout-form label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .checkout-form input, 
+    .checkout-form select, 
+    .checkout-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border 0.3s;
+    }
+
+    .checkout-form input:focus,
+    .checkout-form select:focus,
+    .checkout-form textarea:focus {
+      border-color: #facc15;
+      outline: none;
+    }
+
+    .payment-methods {
+      margin: 16px 0;
+    }
+
+    .payment-methods label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .payment-methods input[type="radio"] {
+      margin-right: 12px;
+    }
+
+    .payment-methods label:hover {
+      border-color: #facc15;
+      background: #fef3c7;
+    }
+
+    .btn-checkout {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      font-size: 1.2em;
+      font-weight: bold;
+      background: #facc15;
+      color: #111;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      margin-top: 20px;
+    }
+
+    .btn-checkout:hover {
+      background: #eab308;
+      transform: scale(1.02);
+    }
+  </style>
 </head>
 <body>
+  <header class="site-header">
+    <a href="index.html" class="brand">Art Store</a>
+    <nav class="main-nav">
+      <a href="index.html">Главная</a>
+      <a href="cart.html">Корзина</a>
+    </nav>
+  </header>
 
-<header class="site-header">
-  <a class="brand" href="index.html">Art Store</a>
-  <nav class="main-nav">
-    <a href="index.html">Главная</a>
-    <div class="dropdown">
-      <a href="#">Магазин</a>
-      <div class="dropdown-content">
-        <a href="paintings.html">Картины</a>
-        <a href="sculptures.html">Скульптуры</a>
-        <a href="rarities.html">Раритет</a>
-        <a href="coins.html">Монеты</a>
+  <div class="checkout-container">
+    <h1>Оформление заказа</h1>
+    <form class="checkout-form" id="checkout-form">
+      <label for="name">ФИО</label>
+      <input type="text" id="name" required placeholder="Ваше имя">
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required placeholder="example@mail.com">
+
+      <label for="address">Адрес доставки</label>
+      <textarea id="address" required placeholder="Улица, дом, город, индекс"></textarea>
+
+      <label for="phone">Телефон</label>
+      <input type="tel" id="phone" required placeholder="+7 (___) ___-__-__">
+
+      <div class="payment-methods">
+        <label><input type="radio" name="payment" value="card" required> Банковская карта</label>
+        <label><input type="radio" name="payment" value="paypal"> PayPal</label>
+        <label><input type="radio" name="payment" value="apple"> Apple Pay</label>
+        <label><input type="radio" name="payment" value="google"> Google Pay</label>
+        <label><input type="radio" name="payment" value="crypto"> Криптовалюта</label>
       </div>
-    </div>
-    <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
-    <a href="contact.html">Контакты</a>
-  </nav>
-</header>
 
-<main class="container">
-  <h1>Оформление заказа</h1>
-  <p>Заполните форму для завершения покупки.</p>
-
-  <form id="checkout-form">
-    <label for="name">Имя:</label>
-    <input type="text" id="name" name="name" required>
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
-
-    <label for="address">Адрес доставки:</label>
-    <textarea id="address" name="address" rows="3" required></textarea>
-
-    <label for="payment">Способ оплаты:</label>
-    <select id="payment" name="payment" required>
-      <option value="">Выберите способ</option>
-      <option value="card">Банковская карта</option>
-      <option value="paypal">PayPal</option>
-      <option value="cash">Наличные при получении</option>
-    </select>
-
-    <button type="submit" class="btn btn-accent">Подтвердить заказ</button>
-  </form>
-
-  <div id="confirmation" style="display:none; margin-top:20px; font-weight:bold;">
-    Спасибо за ваш заказ! Мы свяжемся с вами для подтверждения.
+      <button type="submit" class="btn-checkout">Оформить заказ</button>
+    </form>
   </div>
-</main>
 
-<div class="site-footer-wrapper">
-  <footer class="site-footer">© 2025 Art Store — Corporation VA</footer>
-</div>
-
-<script>
-function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  const total = Object.values(cart).reduce((a,b)=>a+b,0);
-  document.getElementById('cart-count').textContent = total;
-}
-updateCartCount();
-
-document.getElementById('checkout-form').addEventListener('submit', function(e){
-  e.preventDefault();
-  localStorage.removeItem('cart'); // очищаем корзину после заказа
-  updateCartCount();
-  document.getElementById('checkout-form').style.display = 'none';
-  document.getElementById('confirmation').style.display = 'block';
-});
-</script>
-
+  <script>
+    const form = document.getElementById('checkout-form');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Спасибо! Ваш заказ оформлен.');
+      form.reset();
+      window.location.href = 'index.html';
+    });
+  </script>
 </body>
 </html>
