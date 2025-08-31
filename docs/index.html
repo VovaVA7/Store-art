@@ -17,7 +17,7 @@
       <div class="dropdown-content">
         <a href="paintings.html">Картины</a>
         <a href="sculptures.html">Скульптуры</a>
-        <a href="rarities.html">Раритет</a>
+        <a href="rareties.html">Раритет</a>
         <a href="coins.html">Монеты</a>
       </div>
     </div>
@@ -28,31 +28,28 @@
 
 <main class="container">
   <h1>Добро пожаловать в Art Store</h1>
-  <p>Коллекционные предметы искусства для настоящих ценителей.</p>
+  <p>Лучшие картины, скульптуры, раритеты и монеты для коллекционеров.</p>
 
   <div class="sections">
     <div class="section-card">
       <img src="/Store-art/img/painting1.jpg" alt="Картина 1" style="width:100%; border-radius:10px;">
       <h2>Картина 1</h2>
       <p>Описание картины 1.</p>
+      <button class="qty-btn" onclick="addToCart('painting1')">Добавить в корзину</button>
     </div>
 
     <div class="section-card">
       <img src="/Store-art/img/sculpture1.jpg" alt="Скульптура 1" style="width:100%; border-radius:10px;">
       <h2>Скульптура 1</h2>
       <p>Описание скульптуры 1.</p>
+      <button class="qty-btn" onclick="addToCart('sculpture1')">Добавить в корзину</button>
     </div>
 
     <div class="section-card">
       <img src="/Store-art/img/rarity1.jpg" alt="Раритет 1" style="width:100%; border-radius:10px;">
       <h2>Раритет 1</h2>
       <p>Описание раритета 1.</p>
-    </div>
-
-    <div class="section-card">
-      <img src="/Store-art/img/coin1.jpg" alt="Монета 1" style="width:100%; border-radius:10px;">
-      <h2>Монета 1</h2>
-      <p>Описание монеты 1.</p>
+      <button class="qty-btn" onclick="addToCart('rarity1')">Добавить в корзину</button>
     </div>
   </div>
 </main>
@@ -62,15 +59,27 @@
 </div>
 
 <script>
+// функция обновления счётчика корзины
 function updateCartCount() {
   const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  let total = 0;
-  for (const key in cart) {
-    if (cart.hasOwnProperty(key)) total += parseInt(cart[key], 10);
-  }
+  const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
   document.getElementById('cart-count').textContent = total;
 }
-document.addEventListener('DOMContentLoaded', updateCartCount);
+
+// добавление товара в корзину
+function addToCart(itemId) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  if(cart[itemId]) {
+    cart[itemId] += 1;
+  } else {
+    cart[itemId] = 1;
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+}
+
+// запуск при загрузке
+updateCartCount();
 </script>
 
 </body>
