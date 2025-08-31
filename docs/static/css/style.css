@@ -77,23 +77,29 @@ body {
 
 /* ================= Спецпредложение ================= */
 .special-offer {
-  position: relative;      /* вместо fixed */
-  display: block;
-  margin: 20px auto;       /* центр по горизонтали */
+  max-width: 400px; /* короче */
+  margin: 20px auto;
+  padding: 12px 16px;
   text-align: center;
-  background: #facc15;
-  color: #111;
-  padding: 10px 16px;
   border-radius: 12px;
   font-weight: bold;
+  background: #facc15;
+  color: #111;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  transition: transform 0.3s, box-shadow 0.3s;
-  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-.special-offer:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+.special-offer span {
+  display: block;
+  font-size: 1.2em;
+}
+
+.special-offer .btn-accent {
+  padding: 8px 16px;
+  font-size: 1em;
 }
 
 /* ================= Блок приветствия ================= */
@@ -115,7 +121,8 @@ body {
   padding: 24px 20px;
 }
 
-.section-card {
+/* === Карточки для всех 4 страниц === */
+.section-card, .product-card {
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
@@ -123,29 +130,30 @@ body {
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.section-card:hover {
+.section-card:hover, .product-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
-.section-card img {
+.section-card img, .product-card img {
   width: 100%;
   display: block;
   border-radius: 10px 10px 0 0;
 }
 
-.section-card h2 {
+.section-card h2, .product-card .product-info h3 {
   margin: 12px;
   font-size: 1.4em;
 }
 
-.section-card p {
+.section-card p, .product-card .product-info p {
   margin: 0 12px 12px;
   color: #555;
   font-size: 0.95em;
 }
 
-.qty-btn {
+/* === Кнопки "Добавить в корзину" для всех карточек === */
+.qty-btn, .product-card .add-to-cart {
   display: block;
   margin: 0 12px 12px;
   width: calc(100% - 24px);
@@ -159,7 +167,7 @@ body {
   transition: background 0.3s, transform 0.2s;
 }
 
-.qty-btn:hover {
+.qty-btn:hover, .product-card .add-to-cart:hover {
   background: #eab308;
   transform: scale(1.05);
 }
@@ -265,8 +273,7 @@ body {
   }
 
   .special-offer {
-    position: static;
-    display: block;
+    max-width: 90%; /* адаптивно короче */
     margin: 12px auto;
     text-align: center;
   }

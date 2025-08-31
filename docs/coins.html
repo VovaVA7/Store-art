@@ -31,17 +31,27 @@
   <p>Коллекционные монеты со всего мира.</p>
 
   <div class="sections">
-    <div class="section-card">
-      <img src="/Store-art/img/coin1.jpg" alt="Монета 1" style="width:100%; border-radius:10px;">
-      <h2>Монета 1</h2>
-      <p>Описание монеты 1.</p>
+
+    <div class="product-card">
+      <img src="/Store-art/img/coin1.jpg" alt="Монета 1">
+      <div class="product-info">
+        <h3>Монета 1</h3>
+        <p>Описание монеты 1.</p>
+        <p>Цена: 80€</p>
+        <button class="add-to-cart" data-name="Монета 1" data-price="80">Добавить в корзину</button>
+      </div>
     </div>
 
-    <div class="section-card">
-      <img src="/Store-art/img/coin2.jpg" alt="Монета 2" style="width:100%; border-radius:10px;">
-      <h2>Монета 2</h2>
-      <p>Описание монеты 2.</p>
+    <div class="product-card">
+      <img src="/Store-art/img/coin2.jpg" alt="Монета 2">
+      <div class="product-info">
+        <h3>Монета 2</h3>
+        <p>Описание монеты 2.</p>
+        <p>Цена: 95€</p>
+        <button class="add-to-cart" data-name="Монета 2" data-price="95">Добавить в корзину</button>
+      </div>
     </div>
+
   </div>
 </main>
 
@@ -51,12 +61,29 @@
 
 <script>
 function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  let total = 0;
-  for (const key in cart) if (cart.hasOwnProperty(key)) total += parseInt(cart[key],10);
-  document.getElementById('cart-count').textContent = total;
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cart-count').textContent = cart.length;
 }
-document.addEventListener('DOMContentLoaded', updateCartCount);
+
+function addToCart(name, price) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.push({ name, price });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  alert(name + " добавлено в корзину!");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateCartCount();
+
+  document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', () => {
+      const name = button.dataset.name;
+      const price = parseFloat(button.dataset.price);
+      addToCart(name, price);
+    });
+  });
+});
 </script>
 
 </body>
