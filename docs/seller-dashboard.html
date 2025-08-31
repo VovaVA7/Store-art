@@ -5,6 +5,124 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Кабинет продавца</title>
   <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    /* ===== Стиль кабинета продавца ===== */
+    .dashboard-container {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .dashboard-container h1 {
+      margin-bottom: 24px;
+      color: #111;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .upload-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #facc15;
+      color: #111;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .upload-btn:hover {
+      background: #eab308;
+      transform: scale(1.05);
+    }
+
+    .image-preview {
+      margin-top: 12px;
+      height: 180px;
+      border: 2px dashed #ddd;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      overflow: hidden;
+    }
+
+    .image-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 12px;
+    }
+
+    .btn-accent {
+      padding: 12px 24px;
+      background: #facc15;
+      color: #111;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-accent:hover {
+      background: #eab308;
+      transform: scale(1.05);
+    }
+
+    #my-products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .product-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .product-card h3 {
+      margin: 8px 0 4px;
+      font-size: 1.1em;
+    }
+
+    .product-card p {
+      font-size: 0.9em;
+      color: #555;
+      margin: 4px 0;
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -15,28 +133,22 @@
     </nav>
   </header>
 
-  <section class="dashboard">
-    <div class="container">
-      <h1>Кабинет продавца</h1>
-      <form id="add-product-form">
-        <label>Название товара</label>
-        <input type="text" id="product-name" required>
+  <section class="dashboard-container">
+    <h1>Кабинет продавца</h1>
+    <form id="add-product-form">
+      <input type="text" id="product-name" placeholder="Название товара" required>
+      <input type="number" id="product-price" placeholder="Цена (€)" required>
+      <textarea id="product-desc" placeholder="Описание"></textarea>
 
-        <label>Цена (€)</label>
-        <input type="number" id="product-price" required>
+      <label for="product-image" class="upload-btn">Загрузить фото</label>
+      <input type="file" id="product-image" accept="image/*" style="display:none" onchange="previewImage(event)">
+      <div class="image-preview" id="image-preview">Здесь будет превью</div>
 
-        <label>Описание</label>
-        <textarea id="product-desc"></textarea>
+      <button type="submit" class="btn-accent">Добавить товар</button>
+    </form>
 
-        <label>Картинка (URL)</label>
-        <input type="text" id="product-img" placeholder="https://...jpg" required>
-
-        <button type="submit" class="btn">Добавить товар</button>
-      </form>
-
-      <h2>Ваши товары</h2>
-      <div id="my-products"></div>
-    </div>
+    <h2>Ваши товары</h2>
+    <div id="my-products"></div>
   </section>
 
   <script>
@@ -50,6 +162,18 @@
       window.location.href = "login.html";
     }
 
+    function previewImage(event) {
+      const preview = document.getElementById('image-preview');
+      const file = event.target.files[0];
+      if(file){
+          const reader = new FileReader();
+          reader.onload = function(e){
+              preview.innerHTML = `<img src="${e.target.result}" alt="Превью товара">`;
+          }
+          reader.readAsDataURL(file);
+      }
+    }
+
     function renderProducts() {
       const products = JSON.parse(localStorage.getItem("products") || "[]");
       const myProducts = products.filter(p => p.seller === currentUser);
@@ -58,12 +182,12 @@
 
       myProducts.forEach(p => {
         const div = document.createElement("div");
+        div.className = "product-card";
         div.innerHTML = `
+          <img src="${p.img}" alt="${p.name}">
           <h3>${p.name}</h3>
-          <p>Цена: €${p.price}</p>
-          <img src="${p.img}" width="120">
+          <p>€${p.price}</p>
           <p>${p.desc}</p>
-          <hr>
         `;
         container.appendChild(div);
       });
@@ -74,14 +198,26 @@
       const name = document.getElementById("product-name").value;
       const price = document.getElementById("product-price").value;
       const desc = document.getElementById("product-desc").value;
-      const img = document.getElementById("product-img").value;
 
-      let products = JSON.parse(localStorage.getItem("products") || "[]");
-      products.push({ name, price, desc, img, seller: currentUser });
-      localStorage.setItem("products", JSON.stringify(products));
+      // Получаем изображение в Base64
+      const fileInput = document.getElementById("product-image");
+      const file = fileInput.files[0];
+      if(!file){
+        alert("Пожалуйста, загрузите фото товара.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(event){
+        const img = event.target.result;
+        let products = JSON.parse(localStorage.getItem("products") || "[]");
+        products.push({ name, price, desc, img, seller: currentUser });
+        localStorage.setItem("products", JSON.stringify(products));
 
-      renderProducts();
-      e.target.reset();
+        renderProducts();
+        e.target.reset();
+        document.getElementById('image-preview').innerHTML = "Здесь будет превью";
+      }
+      reader.readAsDataURL(file);
     });
 
     renderProducts();
