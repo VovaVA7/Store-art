@@ -16,10 +16,7 @@
       padding: 15px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .cart-img {
-      width: 100px; height: 100px; object-fit: cover;
-      border-radius: 8px; margin-right: 20px;
-    }
+    .cart-img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-right: 20px; }
     .cart-info { flex: 1; }
     .qty-controls { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
     .qty-btn {
@@ -27,10 +24,7 @@
       border-radius: 6px; cursor: pointer; font-size: 18px;
     }
     .qty-btn:hover { background: #ddd; }
-    .qty-input {
-      width: 50px; text-align: center;
-      border: 1px solid #ccc; border-radius: 6px; padding: 4px;
-    }
+    .qty-input { width: 50px; text-align: center; border: 1px solid #ccc; border-radius: 6px; padding: 4px; }
     .remove-btn {
       background: #ff4444; border: none; color: #fff;
       padding: 8px 14px; border-radius: 8px; cursor: pointer;
@@ -90,6 +84,18 @@
   </footer>
 
   <script>
+    // данные о товарах
+    const PRODUCTS = {
+      painting1: {name:"Картина 1", price:100, img:"img/painting1.jpg"},
+      painting2: {name:"Картина 2", price:150, img:"img/painting2.jpg"},
+      sculpture1: {name:"Скульптура 1", price:120, img:"img/sculpture1.jpg"},
+      sculpture2: {name:"Скульптура 2", price:150, img:"img/sculpture2.jpg"},
+      rarity1: {name:"Раритет 1", price:200, img:"img/rarity1.jpg"},
+      rarity2: {name:"Раритет 2", price:250, img:"img/rarity2.jpg"},
+      coin1: {name:"Монета 1", price:80, img:"img/coin1.jpg"},
+      coin2: {name:"Монета 2", price:95, img:"img/coin2.jpg"}
+    };
+
     function renderCart() {
       const cart = JSON.parse(localStorage.getItem('cart') || '{}');
       const itemsContainer = document.getElementById('cart-items');
@@ -98,10 +104,8 @@
       const totalEl = document.getElementById('cart-total');
       itemsContainer.innerHTML = "";
 
-      let total = 0;
       const entries = Object.entries(cart);
-
-      if (entries.length === 0) {
+      if(entries.length === 0) {
         summary.style.display = "none";
         empty.style.display = "block";
         return;
@@ -110,24 +114,27 @@
       empty.style.display = "none";
       summary.style.display = "flex";
 
-      entries.forEach(([name, data]) => {
-        const itemTotal = data.price * data.qty;
+      let total = 0;
+      entries.forEach(([id, qty]) => {
+        if(!PRODUCTS[id]) return;
+        const data = PRODUCTS[id];
+        const itemTotal = data.price * qty;
         total += itemTotal;
 
         const item = document.createElement('div');
         item.className = 'cart-item';
         item.innerHTML = `
-          <img src="${data.img}" alt="${name}" class="cart-img">
+          <img src="${data.img}" alt="${data.name}" class="cart-img">
           <div class="cart-info">
-            <h3>${name}</h3>
+            <h3>${data.name}</h3>
             <p>Цена: €${data.price}</p>
             <div class="qty-controls">
-              <button class="qty-btn" onclick="changeQty('${name}', -1)">-</button>
-              <input type="number" value="${data.qty}" class="qty-input" readonly>
-              <button class="qty-btn" onclick="changeQty('${name}', 1)">+</button>
+              <button class="qty-btn" onclick="changeQty('${id}', -1)">-</button>
+              <input type="number" value="${qty}" class="qty-input" readonly>
+              <button class="qty-btn" onclick="changeQty('${id}', 1)">+</button>
             </div>
           </div>
-          <button class="remove-btn" onclick="removeItem('${name}')">Удалить</button>
+          <button class="remove-btn" onclick="removeItem('${id}')">Удалить</button>
         `;
         itemsContainer.appendChild(item);
       });
@@ -135,18 +142,18 @@
       totalEl.textContent = "€" + total;
     }
 
-    function changeQty(name, delta) {
+    function changeQty(id, delta) {
       const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-      if (!cart[name]) return;
-      cart[name].qty += delta;
-      if (cart[name].qty <= 0) delete cart[name];
+      if(!cart[id]) return;
+      cart[id] += delta;
+      if(cart[id]<=0) delete cart[id];
       localStorage.setItem('cart', JSON.stringify(cart));
       renderCart();
     }
 
-    function removeItem(name) {
+    function removeItem(id) {
       const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-      delete cart[name];
+      delete cart[id];
       localStorage.setItem('cart', JSON.stringify(cart));
       renderCart();
     }

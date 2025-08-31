@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Art Store — Монеты</title>
-<link rel="stylesheet" href="/Store-art/static/css/style.css">
+<link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
 
@@ -31,27 +31,21 @@
   <p>Коллекционные монеты со всего мира.</p>
 
   <div class="sections">
-
-    <div class="product-card">
-      <img src="/Store-art/img/coin1.jpg" alt="Монета 1">
-      <div class="product-info">
-        <h3>Монета 1</h3>
-        <p>Описание монеты 1.</p>
-        <p>Цена: 80€</p>
-        <button class="add-to-cart" data-name="Монета 1" data-price="80">Добавить в корзину</button>
-      </div>
+    <div class="section-card">
+      <img src="img/coin1.jpg" alt="Монета 1">
+      <h2>Монета 1</h2>
+      <p>Описание монеты 1.</p>
+      <p>Цена: 80€</p>
+      <button class="qty-btn" onclick="addToCart('coin1')">Добавить в корзину</button>
     </div>
 
-    <div class="product-card">
-      <img src="/Store-art/img/coin2.jpg" alt="Монета 2">
-      <div class="product-info">
-        <h3>Монета 2</h3>
-        <p>Описание монеты 2.</p>
-        <p>Цена: 95€</p>
-        <button class="add-to-cart" data-name="Монета 2" data-price="95">Добавить в корзину</button>
-      </div>
+    <div class="section-card">
+      <img src="img/coin2.jpg" alt="Монета 2">
+      <h2>Монета 2</h2>
+      <p>Описание монеты 2.</p>
+      <p>Цена: 95€</p>
+      <button class="qty-btn" onclick="addToCart('coin2')">Добавить в корзину</button>
     </div>
-
   </div>
 </main>
 
@@ -61,24 +55,23 @@
 
 <script>
 function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  document.getElementById('cart-count').textContent = cart.length;
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+  const badge = document.getElementById('cart-count');
+  badge.textContent = total;
+  badge.style.animation = 'pop 0.3s';
+  setTimeout(() => badge.style.animation = '', 300);
 }
 
-function addToCart(name, price) {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  cart.push({ name, price });
+function addToCart(itemId) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  cart[itemId] = (cart[itemId] || 0) + 1;
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
-  alert(name + " добавлено в корзину!");
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  updateCartCount();
+updateCartCount();
+</script>
 
-  document.querySelectorAll('.add-to-cart').forEach(button => {
-    button.addEventListener('click', () => {
-      const name = button.dataset.name;
-      const price = parseFloat(button.dataset.price);
-      addToCart(name, price);
-    });
+</body>
+</html>
