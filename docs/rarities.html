@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art Store — Раритет</title>
+<link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">Art Store</a>
+  <nav class="main-nav">
+    <a href="index.html">Главная</a>
+    <div class="dropdown">
+      <a href="#">Магазин</a>
+      <div class="dropdown-content">
+        <a href="paintings.html">Картины</a>
+        <a href="sculptures.html">Скульптуры</a>
+        <a href="rarities.html">Раритет</a>
+        <a href="coins.html">Монеты</a>
+      </div>
+    </div>
+    <a href="cart.html">Корзина <span class="badge" id="cart-count">0</span></a>
+    <a href="contact.html">Контакты</a>
+  </nav>
+</header>
+
+<main class="container">
+  <h1>Раритет</h1>
+  <p>Редкие коллекционные предметы для настоящих ценителей.</p>
+
+  <div class="sections">
+    <div class="section-card">
+      <img src="img/rarity1.jpg" alt="Раритет 1">
+      <h2>Раритет 1</h2>
+      <p>Описание раритета 1.</p>
+      <button class="qty-btn" onclick="addToCart('rarity1')">Добавить в корзину</button>
+    </div>
+
+    <div class="section-card">
+      <img src="img/rarity2.jpg" alt="Раритет 2">
+      <h2>Раритет 2</h2>
+      <p>Описание раритета 2.</p>
+      <button class="qty-btn" onclick="addToCart('rarity2')">Добавить в корзину</button>
+    </div>
+  </div>
+</main>
+
+<div class="site-footer-wrapper">
+  <footer class="site-footer">© 2025 Art Store — Corporation VA</footer>
+</div>
+
+<script>
+// функция обновления счётчика корзины
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+  const badge = document.getElementById('cart-count');
+  badge.textContent = total;
+  badge.style.animation = 'pop 0.3s';
+  setTimeout(() => badge.style.animation = '', 300);
+}
+
+// добавление товара в корзину
+function addToCart(itemId) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  if(cart[itemId]) {
+    cart[itemId] += 1;
+  } else {
+    cart[itemId] = 1;
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+}
+
+// запуск при загрузке
+updateCartCount();
+</script>
+
+</body>
+</html>
