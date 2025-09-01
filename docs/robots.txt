@@ -1,0 +1,8 @@
+# robots.txt для Art Store
+User-agent: *
+Disallow: /cart.html
+Disallow: /login.html
+Disallow: /register.html
+
+Allow: /
+Sitemap: https://vovava7.github.io/Store-art/sitemap.xml
