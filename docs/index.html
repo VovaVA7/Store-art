@@ -5,6 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Art Store — Главная</title>
 <link rel="stylesheet" href="static/css/style.css">
+
+<!-- Минимальная стилизация только для соц-кнопок -->
+<style>
+  .site-footer .social-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 10px auto 12px;
+  }
+  .site-footer .social-links a {
+    background: transparent;
+    border: none;
+    color: #FFC107;            /* жёлтый */
+    font-weight: 600;
+    font-size: 18px;           /* побольше */
+    padding: 6px 10px;         /* «воздух» вокруг текста */
+    text-decoration: none;     /* без подчеркивания по умолчанию */
+    transition: transform .15s ease, color .15s ease;
+  }
+  .site-footer .social-links a:hover {
+    color: #FFDB4D;            /* светлее при ховере */
+    transform: translateY(-1px);
+  }
+  .site-footer .social-links a:focus-visible {
+    outline: 2px dashed #FFC107;
+    outline-offset: 3px;
+  }
+  .site-footer .footer-sep {
+    height: 1px;
+    background: rgba(255, 193, 7, 0.35); /* тонкая жёлтая линия */
+    max-width: 720px;
+    margin: 6px auto 10px;
+  }
+</style>
 </head>
 <body>
 
@@ -69,12 +104,14 @@
 
 <div class="site-footer-wrapper">
   <footer class="site-footer">
-    <div class="social-links">
-      <a href="https://vk.com/" target="_blank">VK</a> |
-      <a href="https://t.me/" target="_blank">Telegram</a> |
-      <a href="https://instagram.com/" target="_blank">Instagram</a> |
-      <a href="https://youtube.com/" target="_blank">YouTube</a>
-    </div>
+    <nav class="social-links" aria-label="Социальные сети">
+      <a href="https://vk.com/" target="_blank" rel="noopener noreferrer" aria-label="VK">VK</a>
+      <a href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">Telegram</a>
+      <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a>
+      <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">YouTube</a>
+      <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">Facebook</a>
+    </nav>
+    <div class="footer-sep" aria-hidden="true"></div>
     <p>© 2025 Art Store — Corporation VA</p>
   </footer>
 </div>
