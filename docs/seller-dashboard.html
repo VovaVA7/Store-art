@@ -43,6 +43,11 @@
     .logout-btn:hover {
       background-color: #e57373;
     }
+    #preview img {
+      max-width: 150px;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -71,7 +76,9 @@
       <option value="rarities">Раритет</option>
       <option value="coins">Монеты</option>
     </select>
-    <input type="url" id="product-image" placeholder="URL изображения" required>
+    <label for="product-image">Загрузить фото:</label>
+    <input type="file" id="product-image" accept="image/*" required>
+    <div id="preview"></div>
     <button type="submit">Добавить товар</button>
   </form>
 
@@ -105,6 +112,20 @@
 
   const productForm = document.getElementById('product-form');
   const productList = document.getElementById('product-list');
+  const preview = document.getElementById('preview');
+  let uploadedImageURL = "";
+
+  // Показываем превью при выборе файла
+  document.getElementById("product-image").addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    preview.innerHTML = "";
+    if (file) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      uploadedImageURL = img.src; // временный blob URL
+      preview.appendChild(img);
+    }
+  });
 
   function displayProducts() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
@@ -130,9 +151,13 @@
     const description = document.getElementById('product-description').value.trim();
     const price = Number(document.getElementById('product-price').value);
     const category = document.getElementById('product-category').value;
-    const imageURL = document.getElementById('product-image').value.trim();
 
-    const newProduct = { name, description, price, category, imageURL };
+    if (!uploadedImageURL) {
+      alert("Пожалуйста, загрузите фото!");
+      return;
+    }
+
+    const newProduct = { name, description, price, category, imageURL: uploadedImageURL };
 
     // Сохраняем в localStorage
     const products = JSON.parse(localStorage.getItem('products') || '[]');
@@ -148,6 +173,8 @@
 
     alert("Товар добавлен!");
     productForm.reset();
+    preview.innerHTML = "";
+    uploadedImageURL = "";
     displayProducts();
   });
 
