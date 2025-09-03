@@ -11,7 +11,7 @@
     <a href="index.html" class="brand">Art Store</a>
     <nav class="main-nav">
       <a href="index.html">Главная</a>
-      <a href="login.html">Войти</a>
+      <a href="login.html">Вход</a>
     </nav>
   </header>
 
@@ -25,31 +25,46 @@
         <label>Пароль</label>
         <input type="password" id="password" placeholder="Введите пароль" required>
 
+        <label>Подтвердите пароль</label>
+        <input type="password" id="confirm-password" placeholder="Повторите пароль" required>
+
         <button type="submit" class="upload-btn">Зарегистрироваться</button>
       </form>
       <p style="text-align:center; margin-top:15px;">
-        Уже зарегистрированы? <a href="login.html" style="color:#facc15; text-decoration:none;">Войти</a>
+        Уже есть аккаунт? <a href="login.html" style="color:#facc15; text-decoration:none;">Войти</a>
       </p>
     </div>
   </section>
 
   <script>
-    document.getElementById("register-form").addEventListener("submit", function(e) {
+    const registerForm = document.getElementById("register-form");
+
+    registerForm.addEventListener("submit", function(e) {
       e.preventDefault();
+
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
 
-      let users = JSON.parse(localStorage.getItem("users") || "[]");
-
-      if (users.find(u => u.username === username)) {
-        alert("Пользователь с таким именем уже существует");
+      if (password !== confirmPassword) {
+        alert("Пароли не совпадают!");
         return;
       }
 
-      users.push({ username, password });
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+      if (users.some(u => u.username === username)) {
+        alert("Пользователь с таким именем уже существует!");
+        return;
+      }
+
+      const newUser = { username, password };
+      users.push(newUser);
       localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("currentUser", JSON.stringify(newUser));
+
       alert("Регистрация успешна!");
-      window.location.href = "login.html";
+      window.location.href = "seller-dashboard.html";
     });
   </script>
 </body>

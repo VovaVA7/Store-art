@@ -6,14 +6,12 @@
 <title>Art Store — Главная</title>
 <link rel="stylesheet" href="static/css/style.css">
 
-<!-- SEO: поисковая оптимизация -->
 <meta name="description" content="Art Store — интернет-магазин искусства. Картины, скульптуры, раритеты и монеты для коллекционеров и ценителей. Доставка по всему миру.">
 <meta name="keywords" content="Art Store, картины, скульптуры, раритеты, монеты, искусство, купить картину, магазин искусства">
 <meta name="author" content="Art Store">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://vovava7.github.io/Store-art/">
 
-<!-- Open Graph (для соцсетей и мессенджеров) -->
 <meta property="og:title" content="Art Store — магазин искусства">
 <meta property="og:description" content="Картины, скульптуры, монеты и раритеты для коллекционеров.">
 <meta property="og:type" content="website">
@@ -21,14 +19,13 @@
 <meta property="og:image" content="https://vovava7.github.io/Store-art/img/painting1.jpg">
 <meta property="og:locale" content="ru_RU">
 
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Art Store — магазин искусства">
 <meta name="twitter:description" content="Картины, скульптуры, монеты и раритеты для коллекционеров.">
 <meta name="twitter:image" content="https://vovava7.github.io/Store-art/img/painting1.jpg">
 
-<!-- Минимальная стилизация только для соц-кнопок -->
 <style>
+  /* стили витрины и футера — оставляем без изменений */
   .site-footer .social-links {
     display: flex;
     justify-content: center;
@@ -39,15 +36,15 @@
   .site-footer .social-links a {
     background: transparent;
     border: none;
-    color: #FFC107;            /* жёлтый */
+    color: #FFC107;
     font-weight: 600;
-    font-size: 18px;           /* побольше */
-    padding: 6px 10px;         /* «воздух» вокруг текста */
-    text-decoration: none;     /* без подчеркивания по умолчанию */
+    font-size: 18px;
+    padding: 6px 10px;
+    text-decoration: none;
     transition: transform .15s ease, color .15s ease;
   }
   .site-footer .social-links a:hover {
-    color: #FFDB4D;            /* светлее при ховере */
+    color: #FFDB4D;
     transform: translateY(-1px);
   }
   .site-footer .social-links a:focus-visible {
@@ -56,9 +53,50 @@
   }
   .site-footer .footer-sep {
     height: 1px;
-    background: rgba(255, 193, 7, 0.35); /* тонкая жёлтая линия */
+    background: rgba(255, 193, 7, 0.35);
     max-width: 720px;
     margin: 6px auto 10px;
+  }
+
+  .sections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  .section-card {
+    width: 220px;
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+  }
+  .section-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .section-card h2 {
+    font-size: 18px;
+    margin: 10px 0 6px;
+  }
+  .section-card p {
+    font-size: 14px;
+    color: #555;
+    min-height: 40px;
+  }
+  .qty-btn {
+    padding: 6px 12px;
+    background-color: #FFC107;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .qty-btn:hover {
+    background-color: #FFDB4D;
   }
 </style>
 </head>
@@ -88,7 +126,6 @@
 </header>
 
 <main class="container">
-  <!-- Специальное предложение с кнопкой -->
   <div class="special-offer">
     <span>🔥 Специальное предложение! Скидка 10% на первый заказ! 🔥</span>
     <a href="paintings.html" class="btn btn-accent">Перейти к картинам</a>
@@ -100,34 +137,7 @@
   </div>
 
   <div class="sections">
-    <div class="section-card">
-      <img src="img/painting1.jpg" alt="Картина 1">
-      <h2>Картина 1</h2>
-      <p>Описание картины 1.</p>
-      <button class="qty-btn" onclick="addToCart('painting1')">Добавить в корзину</button>
-    </div>
-
-    <div class="section-card">
-      <img src="img/sculpture1.jpg" alt="Скульптура 1">
-      <h2>Скульптура 1</h2>
-      <p>Описание скульптуры 1.</p>
-      <button class="qty-btn" onclick="addToCart('sculpture1')">Добавить в корзину</button>
-    </div>
-
-    <div class="section-card">
-      <img src="img/rarity1.jpg" alt="Раритет 1">
-      <h2>Раритет 1</h2>
-      <p>Описание раритета 1.</p>
-      <button class="qty-btn" onclick="addToCart('rarity1')">Добавить в корзину</button>
-    </div>
-
-    <!-- 🔹 Новый 4-й раздел -->
-    <div class="section-card">
-      <img src="img/coin1.jpg" alt="Монета 1">
-      <h2>Монета 1</h2>
-      <p>Описание монеты 1.</p>
-      <button class="qty-btn" onclick="addToCart('coin1')">Добавить в корзину</button>
-    </div>
+    <!-- Динамическая витрина -->
   </div>
 </main>
 
@@ -145,31 +155,90 @@
   </footer>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-// функция обновления счётчика корзины
-function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
-  const badge = document.getElementById('cart-count');
-  badge.textContent = total;
-  badge.style.animation = 'pop 0.3s';
-  setTimeout(() => badge.style.animation = '', 300);
-}
+  // ======== Firebase ========
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
+    authDomain: "artstore-e9610.firebaseapp.com",
+    projectId: "artstore-e9610",
+    storageBucket: "artstore-e9610.appspot.com",
+    messagingSenderId: "116819253020",
+    appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
+  };
 
-// добавление товара в корзину
-function addToCart(itemId) {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  if(cart[itemId]) {
-    cart[itemId] += 1;
-  } else {
-    cart[itemId] = 1;
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const sectionsContainer = document.querySelector('.sections');
+
+  // ======== Отображение товаров ========
+  function displayProducts(products) {
+    sectionsContainer.innerHTML = '';
+    products.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'section-card';
+      card.innerHTML = `
+        <img src="${product.imageURL}" alt="${product.name}">
+        <h2>${product.name}</h2>
+        <p>${product.description}</p>
+        <button class="qty-btn" onclick="addToCart('${product.id}')">Добавить в корзину</button>
+      `;
+      sectionsContainer.appendChild(card);
+    });
   }
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCartCount();
-}
 
-// запуск при загрузке
-updateCartCount();
+  // ======== Получение товаров по категориям ========
+  async function fetchProductsByCategory(category) {
+    try {
+      const snapshot = await db.collection("products")
+                               .where("category", "==", category)
+                               .get();
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (err) {
+      console.error("Ошибка получения товаров:", err);
+      return [];
+    }
+  }
+
+  // ======== Обновление витрины ========
+  async function refreshSections() {
+    const categories = ["paintings", "sculptures", "rarities", "coins"];
+    const allProducts = [];
+
+    for (const cat of categories) {
+      const products = await fetchProductsByCategory(cat);
+      allProducts.push(...products.sort(() => 0.5 - Math.random()).slice(0, 2));
+    }
+
+    displayProducts(allProducts);
+  }
+
+  // запуск сразу и каждые 5 секунд
+  refreshSections();
+  setInterval(refreshSections, 5000);
+
+  // ======== Корзина ========
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+    const badge = document.getElementById('cart-count');
+    badge.textContent = total;
+    badge.style.animation = 'pop 0.3s';
+    setTimeout(() => badge.style.animation = '', 300);
+  }
+
+  function addToCart(itemId) {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    cart[itemId] = (cart[itemId] || 0) + 1;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+  }
+
+  updateCartCount();
 </script>
 
 </body>
