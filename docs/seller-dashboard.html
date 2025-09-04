@@ -48,6 +48,15 @@
       margin-top: 10px;
       border-radius: 4px;
     }
+    .product-card {
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+    .product-card img {
+      width: 120px;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -89,6 +98,8 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
 <script>
   // ===== Firebase =====
@@ -102,89 +113,95 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  if (!currentUser) {
-    alert("Пожалуйста, войдите!");
-    window.location.href = "login.html";
-  }
-  document.getElementById('welcome-user').textContent = `Привет, ${currentUser.username}`;
+  const storage = firebase.storage();
+  const auth = firebase.auth();
 
   const productForm = document.getElementById('product-form');
   const productList = document.getElementById('product-list');
   const preview = document.getElementById('preview');
-  let uploadedImageURL = "";
 
-  // Показываем превью при выборе файла
+  // ===== Firebase Auth =====
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('welcome-user').textContent = `Привет, ${user.email}`;
+      displayProducts(user.uid);
+    } else {
+      window.location.href = "login.html";
+    }
+  });
+
+  // Logout
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    auth.signOut().then(() => {
+      window.location.href = 'login.html';
+    });
+  });
+
+  // Превью изображения
   document.getElementById("product-image").addEventListener("change", function(e) {
     const file = e.target.files[0];
     preview.innerHTML = "";
     if (file) {
       const img = document.createElement("img");
       img.src = URL.createObjectURL(file);
-      uploadedImageURL = img.src; // временный blob URL
       preview.appendChild(img);
     }
   });
 
-  function displayProducts() {
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    productList.innerHTML = '';
-    products.forEach(prod => {
-      const div = document.createElement('div');
-      div.style.border = '1px solid #ddd';
-      div.style.marginBottom = '10px';
-      div.style.padding = '10px';
-      div.innerHTML = `
-        <strong>${prod.name}</strong> (${prod.category}) — ${prod.price}€
-        <br>
-        <img src="${prod.imageURL}" alt="${prod.name}" style="width:120px; margin-top:5px;">
-        <p>${prod.description}</p>
-      `;
-      productList.appendChild(div);
-    });
-  }
-
+  // Добавление товара
   productForm.addEventListener('submit', async function(e) {
     e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return alert("Пользователь не авторизован");
+
     const name = document.getElementById('product-name').value.trim();
     const description = document.getElementById('product-description').value.trim();
     const price = Number(document.getElementById('product-price').value);
     const category = document.getElementById('product-category').value;
+    const fileInput = document.getElementById('product-image');
+    const file = fileInput.files[0];
 
-    if (!uploadedImageURL) {
-      alert("Пожалуйста, загрузите фото!");
-      return;
-    }
+    if (!file) return alert("Пожалуйста, загрузите фото!");
 
-    const newProduct = { name, description, price, category, imageURL: uploadedImageURL };
-
-    // Сохраняем в localStorage
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    products.push(newProduct);
-    localStorage.setItem('products', JSON.stringify(products));
-
-    // Сохраняем в Firebase
     try {
+      const storageRef = storage.ref(`products/${user.uid}_${Date.now()}_${file.name}`);
+      await storageRef.put(file);
+      const imageURL = await storageRef.getDownloadURL();
+
+      const newProduct = { name, description, price, category, imageURL, ownerId: user.uid };
       await db.collection("products").add(newProduct);
+
+      alert("Товар добавлен!");
+      productForm.reset();
+      preview.innerHTML = "";
+      displayProducts(user.uid);
     } catch (err) {
-      console.error("Ошибка Firebase:", err);
+      console.error("Ошибка загрузки:", err);
+      alert("Не удалось загрузить товар.");
     }
-
-    alert("Товар добавлен!");
-    productForm.reset();
-    preview.innerHTML = "";
-    uploadedImageURL = "";
-    displayProducts();
   });
 
-  // Logout
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    localStorage.removeItem('currentUser');
-    window.location.href = 'login.html';
-  });
-
-  displayProducts();
+  // Отображение товаров пользователя
+  async function displayProducts(uid) {
+    productList.innerHTML = "";
+    try {
+      const snapshot = await db.collection("products").where("ownerId", "==", uid).get();
+      snapshot.forEach(doc => {
+        const prod = doc.data();
+        const div = document.createElement('div');
+        div.className = "product-card";
+        div.innerHTML = `
+          <strong>${prod.name}</strong> (${prod.category}) — ${prod.price}€
+          <br>
+          <img src="${prod.imageURL}" alt="${prod.name}">
+          <p>${prod.description}</p>
+        `;
+        productList.appendChild(div);
+      });
+    } catch (err) {
+      console.error("Ошибка загрузки товаров:", err);
+    }
+  }
 </script>
 </body>
 </html>

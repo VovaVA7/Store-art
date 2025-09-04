@@ -101,26 +101,36 @@
 
   const paintingsList = document.getElementById('paintings-list');
 
+  // ===== Загрузка картин =====
   async function loadPaintings() {
-    const snapshot = await db.collection("products")
-                             .where("category", "==", "paintings")
-                             .get();
+    try {
+      const snapshot = await db.collection("products")
+                               .where("category", "==", "картины")
+                               .get();
 
-    paintingsList.innerHTML = "";
+      paintingsList.innerHTML = "";
 
-    snapshot.forEach(doc => {
-      const product = doc.data();
-      const card = document.createElement('div');
-      card.className = "section-card";
-      card.innerHTML = `
-        <img src="${product.imageURL}" alt="${product.name}">
-        <h2>${product.name}</h2>
-        <p>${product.description}</p>
-        <p><strong>Цена: ${product.price}€</strong></p>
-        <button class="qty-btn" onclick="addToCart('${doc.id}')">Добавить в корзину</button>
-      `;
-      paintingsList.appendChild(card);
-    });
+      if (snapshot.empty) {
+        paintingsList.innerHTML = "<p>Картины пока не добавлены.</p>";
+      }
+
+      snapshot.forEach(doc => {
+        const product = doc.data();
+        const card = document.createElement('div');
+        card.className = "section-card";
+        card.innerHTML = `
+          <img src="${product.imageURL}" alt="${product.name}">
+          <h2>${product.name}</h2>
+          <p>${product.description}</p>
+          <p><strong>Цена: ${product.price}€</strong></p>
+          <button class="qty-btn" onclick="addToCart('${doc.id}')">Добавить в корзину</button>
+        `;
+        paintingsList.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Ошибка загрузки картин:", err);
+      paintingsList.innerHTML = "<p>Не удалось загрузить товары.</p>";
+    }
   }
 
   // ===== Корзина =====
