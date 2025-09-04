@@ -19,8 +19,8 @@
     <div class="container">
       <h1>Вход продавца</h1>
       <form id="login-form">
-        <label>Имя пользователя</label>
-        <input type="text" id="username" placeholder="Введите имя" required>
+        <label>Электронная почта</label>
+        <input type="email" id="email" placeholder="Введите email" required>
 
         <label>Пароль</label>
         <input type="password" id="password" placeholder="Введите пароль" required>
@@ -33,26 +33,47 @@
     </div>
   </section>
 
-  <script>
-    const loginForm = document.getElementById("login-form");
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
+  <script>
+    // ===== Firebase config =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
+      authDomain: "artstore-e9610.firebaseapp.com",
+      projectId: "artstore-e9610",
+      storageBucket: "artstore-e9610.appspot.com",
+      messagingSenderId: "116819253020",
+      appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Проверка авторизации
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // Пользователь уже вошёл, редирект в кабинет
+        window.location.href = "seller-dashboard.html";
+      }
+    });
+
+    const loginForm = document.getElementById("login-form");
     loginForm.addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find(u => u.username === username && u.password === password);
-
-      if (!user) {
-        alert("Неверное имя пользователя или пароль");
-        return;
-      }
-
-      // Сохраняем текущего пользователя
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      window.location.href = "seller-dashboard.html";
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          // Успешный вход
+          window.location.href = "seller-dashboard.html";
+        })
+        .catch(error => {
+          console.error("Ошибка входа:", error);
+          alert("Неверная почта или пароль");
+        });
     });
   </script>
 </body>

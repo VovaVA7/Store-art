@@ -126,6 +126,7 @@
       document.getElementById('welcome-user').textContent = `Привет, ${user.email}`;
       displayProducts(user.uid);
     } else {
+      console.log("Пользователь не авторизован, редирект на login.html");
       window.location.href = "login.html";
     }
   });
