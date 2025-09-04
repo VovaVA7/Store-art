@@ -30,22 +30,8 @@
   <h1>Монеты</h1>
   <p>Коллекционные монеты со всего мира.</p>
 
-  <div class="sections">
-    <div class="section-card">
-      <img src="img/coin1.jpg" alt="Монета 1">
-      <h2>Монета 1</h2>
-      <p>Описание монеты 1.</p>
-      <p>Цена: 80€</p>
-      <button class="qty-btn" onclick="addToCart('coin1')">Добавить в корзину</button>
-    </div>
-
-    <div class="section-card">
-      <img src="img/coin2.jpg" alt="Монета 2">
-      <h2>Монета 2</h2>
-      <p>Описание монеты 2.</p>
-      <p>Цена: 95€</p>
-      <button class="qty-btn" onclick="addToCart('coin2')">Добавить в корзину</button>
-    </div>
+  <div class="sections" id="coins-list">
+    <!-- сюда загрузятся товары из Firestore -->
   </div>
 </main>
 
@@ -53,24 +39,79 @@
   <footer class="site-footer">© 2025 Art Store — Corporation VA</footer>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
-  const badge = document.getElementById('cart-count');
-  badge.textContent = total;
-  badge.style.animation = 'pop 0.3s';
-  setTimeout(() => badge.style.animation = '', 300);
-}
+  // ===== Firebase =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
+    authDomain: "artstore-e9610.firebaseapp.com",
+    projectId: "artstore-e9610",
+    storageBucket: "artstore-e9610.appspot.com",
+    messagingSenderId: "116819253020",
+    appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
+  };
+  if (!firebase.apps || !firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  } else {
+    try { firebase.app(); } catch(e) { firebase.initializeApp(firebaseConfig); }
+  }
+  const db = firebase.firestore();
 
-function addToCart(itemId) {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  cart[itemId] = (cart[itemId] || 0) + 1;
-  localStorage.setItem('cart', JSON.stringify(cart));
+  const listEl = document.getElementById('coins-list');
+
+  async function loadCoins() {
+    try {
+      const snap = await db.collection("products")
+                           .where("category", "==", "coins")
+                           .get();
+
+      listEl.innerHTML = "";
+
+      if (snap.empty) {
+        listEl.innerHTML = '<p style="text-align:center;color:#666;">Пока нет товаров в этой категории.</p>';
+        return;
+      }
+
+      snap.forEach(doc => {
+        const p = doc.data();
+        const card = document.createElement('div');
+        card.className = 'section-card';
+        card.innerHTML = `
+          <img src="${p.imageURL || 'img/placeholder.png'}" alt="${p.name || 'Товар'}">
+          <h2>${p.name || 'Без названия'}</h2>
+          <p>${p.description || ''}</p>
+          ${p.price ? `<p><strong>Цена: ${p.price}€</strong></p>` : ''}
+          <button class="qty-btn" onclick="addToCart('${doc.id}')">Добавить в корзину</button>
+        `;
+        listEl.appendChild(card);
+      });
+    } catch (e) {
+      console.error("Ошибка загрузки монет:", e);
+      listEl.innerHTML = '<p style="text-align:center;color:#c00;">Ошибка загрузки товаров.</p>';
+    }
+  }
+
+  // ===== Корзина =====
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+    const badge = document.getElementById('cart-count');
+    if (badge) badge.textContent = total;
+  }
+
+  function addToCart(itemId) {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    cart[itemId] = (cart[itemId] || 0) + 1;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+  }
+
+  // Инициализация
   updateCartCount();
-}
-
-updateCartCount();
+  loadCoins();
 </script>
 
 </body>

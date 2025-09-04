@@ -5,6 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Art Store — Картины</title>
 <link rel="stylesheet" href="static/css/style.css">
+<style>
+  .sections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  .section-card {
+    width: 220px;
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+    background: #fff;
+  }
+  .section-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .section-card h2 {
+    font-size: 18px;
+    margin: 10px 0 6px;
+  }
+  .section-card p {
+    font-size: 14px;
+    color: #555;
+    min-height: 40px;
+  }
+  .qty-btn {
+    padding: 6px 12px;
+    background-color: #FFC107;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .qty-btn:hover {
+    background-color: #FFDB4D;
+  }
+</style>
 </head>
 <body>
 
@@ -30,22 +73,8 @@
   <h1>Картины</h1>
   <p>Эксклюзивные картины для вашего интерьера и коллекции.</p>
 
-  <div class="sections">
-    <div class="section-card">
-      <img src="img/painting1.jpg" alt="Картина 1">
-      <h2>Картина 1</h2>
-      <p>Описание картины 1.</p>
-      <p>Цена: 50€</p>
-      <button class="qty-btn" onclick="addToCart('painting1')">Добавить в корзину</button>
-    </div>
-
-    <div class="section-card">
-      <img src="img/painting2.jpg" alt="Картина 2">
-      <h2>Картина 2</h2>
-      <p>Описание картины 2.</p>
-      <p>Цена: 70€</p>
-      <button class="qty-btn" onclick="addToCart('painting2')">Добавить в корзину</button>
-    </div>
+  <div class="sections" id="paintings-list">
+    <!-- сюда загрузятся товары из Firebase -->
   </div>
 </main>
 
@@ -53,24 +82,63 @@
   <footer class="site-footer">© 2025 Art Store — Corporation VA</footer>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-function updateCartCount() {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
-  const badge = document.getElementById('cart-count');
-  badge.textContent = total;
-  badge.style.animation = 'pop 0.3s';
-  setTimeout(() => badge.style.animation = '', 300);
-}
+  // ===== Firebase =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
+    authDomain: "artstore-e9610.firebaseapp.com",
+    projectId: "artstore-e9610",
+    storageBucket: "artstore-e9610.appspot.com",
+    messagingSenderId: "116819253020",
+    appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-function addToCart(itemId) {
-  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-  cart[itemId] = (cart[itemId] || 0) + 1;
-  localStorage.setItem('cart', JSON.stringify(cart));
+  const paintingsList = document.getElementById('paintings-list');
+
+  async function loadPaintings() {
+    const snapshot = await db.collection("products")
+                             .where("category", "==", "paintings")
+                             .get();
+
+    paintingsList.innerHTML = "";
+
+    snapshot.forEach(doc => {
+      const product = doc.data();
+      const card = document.createElement('div');
+      card.className = "section-card";
+      card.innerHTML = `
+        <img src="${product.imageURL}" alt="${product.name}">
+        <h2>${product.name}</h2>
+        <p>${product.description}</p>
+        <p><strong>Цена: ${product.price}€</strong></p>
+        <button class="qty-btn" onclick="addToCart('${doc.id}')">Добавить в корзину</button>
+      `;
+      paintingsList.appendChild(card);
+    });
+  }
+
+  // ===== Корзина =====
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+    document.getElementById('cart-count').textContent = total;
+  }
+
+  function addToCart(itemId) {
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    cart[itemId] = (cart[itemId] || 0) + 1;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+  }
+
   updateCartCount();
-}
-
-updateCartCount();
+  loadPaintings();
 </script>
 
 </body>
