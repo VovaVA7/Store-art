@@ -155,12 +155,14 @@
   </footer>
 </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- Firebase (модульный SDK) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-<script>
-  // ======== Firebase ========
+  // ======== Firebase config ========
   const firebaseConfig = {
     apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
     authDomain: "artstore-e9610.firebaseapp.com",
@@ -170,8 +172,11 @@
     appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
   };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  // ======== Инициализация ========
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  const storage = getStorage(app);
 
   const sectionsContainer = document.querySelector('.sections');
 
@@ -191,12 +196,11 @@
     });
   }
 
-  // ======== Получение товаров по категориям ========
+  // ======== Получение товаров по категории ========
   async function fetchProductsByCategory(category) {
     try {
-      const snapshot = await db.collection("products")
-                               .where("category", "==", category)
-                               .get();
+      const q = query(collection(db, "products"), where("category", "==", category));
+      const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (err) {
       console.error("Ошибка получения товаров:", err);
@@ -217,12 +221,11 @@
     displayProducts(allProducts);
   }
 
-  // запуск сразу и каждые 5 секунд
+  // запуск сразу
   refreshSections();
-  setInterval(refreshSections, 5000);
 
   // ======== Корзина ========
-  function updateCartCount() {
+  window.updateCartCount = function() {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
     const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
     const badge = document.getElementById('cart-count');
@@ -231,7 +234,7 @@
     setTimeout(() => badge.style.animation = '', 300);
   }
 
-  function addToCart(itemId) {
+  window.addToCart = function(itemId) {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
     cart[itemId] = (cart[itemId] || 0) + 1;
     localStorage.setItem('cart', JSON.stringify(cart));
