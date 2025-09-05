@@ -2,46 +2,65 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <title>Регистрация — Art Store</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Регистрация продавца</title>
-  <link rel="stylesheet" href="static/css/style.css">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f7f7; }
+    .form-container {
+      max-width: 400px;
+      margin: 80px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1 { text-align: center; margin-bottom: 20px; }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 12px;
+      background: #FFC107;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background: #FFDB4D; }
+    .error { color: red; font-size: 14px; margin-top: 10px; text-align: center; }
+    .success { color: green; font-size: 14px; margin-top: 10px; text-align: center; }
+    .link { text-align: center; margin-top: 12px; }
+    .link a { color: #FFC107; text-decoration: none; }
+    .link a:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <a href="index.html" class="brand">Art Store</a>
-    <nav class="main-nav">
-      <a href="index.html">Главная</a>
-      <a href="login.html">Вход</a>
-    </nav>
-  </header>
-
-  <section class="dashboard">
-    <div class="container">
-      <h1>Регистрация продавца</h1>
-      <form id="register-form">
-        <label>Электронная почта</label>
-        <input type="email" id="email" placeholder="Введите email" required>
-
-        <label>Пароль</label>
-        <input type="password" id="password" placeholder="Введите пароль" required>
-
-        <label>Подтвердите пароль</label>
-        <input type="password" id="confirm-password" placeholder="Повторите пароль" required>
-
-        <button type="submit" class="upload-btn">Зарегистрироваться</button>
-      </form>
-      <p style="text-align:center; margin-top:15px;">
-        Уже есть аккаунт? <a href="login.html" style="color:#facc15; text-decoration:none;">Войти</a>
-      </p>
+  <div class="form-container">
+    <h1>Регистрация</h1>
+    <form id="registerForm">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Пароль" required>
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+    <div id="message"></div>
+    <div class="link">
+      Уже есть аккаунт? <a href="login.html">Войти</a>
     </div>
-  </section>
+  </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  <script>
-    // ===== Firebase config =====
+    // 🔑 Твой Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
       authDomain: "artstore-e9610.firebaseapp.com",
@@ -50,40 +69,29 @@
       messagingSenderId: "116819253020",
       appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
 
-    // Проверка авторизации
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        // Пользователь уже вошёл, редирект в кабинет
-        window.location.href = "seller-dashboard.html";
-      }
-    });
+    // 🔥 Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    const registerForm = document.getElementById("register-form");
-    registerForm.addEventListener("submit", function(e) {
+    const form = document.getElementById("registerForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      message.textContent = "";
 
       const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirm-password").value;
+      const password = document.getElementById("password").value.trim();
 
-      if (password !== confirmPassword) {
-        alert("Пароли не совпадают!");
-        return;
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        message.innerHTML = `<p class="success">Регистрация успешна! Добро пожаловать, ${userCred.user.email}</p>`;
+        // Перенаправляем в личный кабинет через 1.5 секунды
+        setTimeout(() => window.location.href = "cabinet.html", 1500);
+      } catch (error) {
+        message.innerHTML = `<p class="error">Ошибка: ${error.message}</p>`;
       }
-
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          // Успешная регистрация
-          alert("Регистрация успешна!");
-          window.location.href = "seller-dashboard.html";
-        })
-        .catch(error => {
-          console.error("Ошибка регистрации:", error);
-          alert(error.message);
-        });
     });
   </script>
 </body>
