@@ -155,93 +155,84 @@
   </footer>
 </div>
 
-<!-- Firebase (модульный SDK) -->
+<!-- Firebase SDK -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-  // ======== Firebase config ========
-  const firebaseConfig = {
-    apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
-    authDomain: "artstore-e9610.firebaseapp.com",
-    projectId: "artstore-e9610",
-    storageBucket: "artstore-e9610.appspot.com",
-    messagingSenderId: "116819253020",
-    appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
-  };
+// ===== Firebase config =====
+const firebaseConfig = {
+  apiKey: "AIzaSyDgymi8tGWcLsowq8cPYZUcG3xCk2CbG2E",
+  authDomain: "artstore-e9610.firebaseapp.com",
+  projectId: "artstore-e9610",
+  storageBucket: "artstore-e9610.appspot.com",
+  messagingSenderId: "116819253020",
+  appId: "1:116819253020:web:a4860eb14a7beef637ccd9"
+};
 
-  // ======== Инициализация ========
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-  const storage = getStorage(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
 
-  const sectionsContainer = document.querySelector('.sections');
+const sectionsContainer = document.querySelector('.sections');
 
-  // ======== Отображение товаров ========
-  function displayProducts(products) {
-    sectionsContainer.innerHTML = '';
-    products.forEach(product => {
-      const card = document.createElement('div');
-      card.className = 'section-card';
-      card.innerHTML = `
-        <img src="${product.imageURL}" alt="${product.name}">
-        <h2>${product.name}</h2>
-        <p>${product.description}</p>
-        <button class="qty-btn" onclick="addToCart('${product.id}')">Добавить в корзину</button>
-      `;
-      sectionsContainer.appendChild(card);
-    });
+// ===== Получение всех товаров =====
+async function fetchAllProducts() {
+  try {
+    const snapshot = await getDocs(collection(db, "products"));
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error("Ошибка получения товаров:", err);
+    return [];
   }
+}
 
-  // ======== Получение товаров по категории ========
-  async function fetchProductsByCategory(category) {
-    try {
-      const q = query(collection(db, "products"), where("category", "==", category));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (err) {
-      console.error("Ошибка получения товаров:", err);
-      return [];
-    }
-  }
+// ===== Отображение товаров =====
+function displayProducts(products) {
+  sectionsContainer.innerHTML = '';
+  products.forEach(product => {
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    card.innerHTML = `
+      <img src="${product.imageURL}" alt="${product.name}">
+      <h2>${product.name}</h2>
+      <p>${product.description}</p>
+      <p>Цена: ${product.price} ₽</p>
+      <button class="qty-btn" onclick="addToCart('${product.id}')">Добавить в корзину</button>
+    `;
+    sectionsContainer.appendChild(card);
+  });
+}
 
-  // ======== Обновление витрины ========
-  async function refreshSections() {
-    const categories = ["paintings", "sculptures", "rarities", "coins"];
-    const allProducts = [];
+// ===== Загрузка и отображение =====
+async function refreshSections() {
+  const products = await fetchAllProducts();
+  displayProducts(products);
+}
 
-    for (const cat of categories) {
-      const products = await fetchProductsByCategory(cat);
-      allProducts.push(...products.sort(() => 0.5 - Math.random()).slice(0, 2));
-    }
+refreshSections();
 
-    displayProducts(allProducts);
-  }
+// ===== Корзина =====
+window.updateCartCount = function() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+  const badge = document.getElementById('cart-count');
+  badge.textContent = total;
+  badge.style.animation = 'pop 0.3s';
+  setTimeout(() => badge.style.animation = '', 300);
+}
 
-  // запуск сразу
-  refreshSections();
-
-  // ======== Корзина ========
-  window.updateCartCount = function() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-    const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
-    const badge = document.getElementById('cart-count');
-    badge.textContent = total;
-    badge.style.animation = 'pop 0.3s';
-    setTimeout(() => badge.style.animation = '', 300);
-  }
-
-  window.addToCart = function(itemId) {
-    const cart = JSON.parse(localStorage.getItem('cart') || '{}');
-    cart[itemId] = (cart[itemId] || 0) + 1;
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-  }
-
+window.addToCart = function(itemId) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+  cart[itemId] = (cart[itemId] || 0) + 1;
+  localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
+}
+
+updateCartCount();
 </script>
 
 </body>
